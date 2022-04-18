@@ -2,30 +2,35 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+LiquidCrystal lcd(7, 6, 5, 4, 3,2);
 
 #define RST_PIN 8
 #define SS_PIN 10
 #define sensorPin1 A2
+#define red_light 9
+
 
 int card1Balance = 5000;
 int card2Balance = 300;
 
 int senVal1;
 
-int red_light = 1;
+//int red_light = 1;
 int intervalRed = 8000;
 
 unsigned long previousRed = 0;
 
-int redState = LOW ;
+bool redState = LOW;
+bool yellowState = LOW;
+bool greenState = LOW;
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 void setup() {
   // put your setup code here, to run once:
 lcd.begin(16,2);
-Serial.begin(9600);
- pinMode(red_light,OUTPUT);
+//Serial.begin(9600);
+ pinMode(9,OUTPUT);
+ pinMode(1,OUTPUT);
  pinMode(sensorPin1, INPUT);
   SPI.begin();
   mfrc522.PCD_Init();
@@ -41,8 +46,7 @@ Serial.begin(9600);
 void loop() {
   unsigned long currentMills = millis();
   // put your main code here, to run repeatedly:
-lcd.setCursor(0,0);
-lcd.print("Stop");
+
 
 if(currentMills - previousRed >= intervalRed){
   previousRed = currentMills;
@@ -53,22 +57,16 @@ if(currentMills - previousRed >= intervalRed){
     redState = LOW;
   }
 
-  if(redState == 1){
-    digitalWrite(red_light,HIGH);
-  }
-  else{
-    digitalWrite(red_light,LOW);
-  }
+
   
 }
 
-//lcd.setCursor(0,1);
-//lcd.print(redState);
 if(redState == HIGH){
-   lcd.setCursor(7,1);
-lcd.print(redState);
-  lcd.setCursor(0,1);
-lcd.print("HIGH");
+  digitalWrite(9,HIGH);
+  digitalWrite(1,LOW);
+  lcd.setCursor(0,0);
+lcd.print("STOP");
+
   sensorRead();
 
     if (senVal1 == 0)
@@ -76,10 +74,12 @@ lcd.print("HIGH");
 rfid();
     }
 }else{
-     lcd.setCursor(7,1);
-lcd.print(redState);
-  lcd.setCursor(0,1);
-lcd.print("LOWO");
+  digitalWrite(9,LOW);
+  digitalWrite(1,HIGH);
+     lcd.setCursor(0,0);
+lcd.print("GO");
+
+digitalWrite(0,HIGH);
 }
 
 }
@@ -151,7 +151,7 @@ void rfid(){
       lcd.setCursor(0, 0);
       lcd.print(card);
       lcd.setCursor(0, 1);
-      lcd.print("No Money");
+      lcd.print( "No Money");
        senVal1 =1;
        delay(1000);
       lcd.clear();
