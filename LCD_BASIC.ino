@@ -16,7 +16,7 @@ int card2Balance = 300;
 int senVal1;
 
 //int red_light = 1;
-int intervalRed = 8000;
+int intervalRed = 20000;
 
 unsigned long previousRed = 0;
 
@@ -48,6 +48,9 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 
+
+
+
 if(currentMills - previousRed >= intervalRed){
   previousRed = currentMills;
 
@@ -77,7 +80,7 @@ rfid();
   digitalWrite(9,LOW);
   digitalWrite(1,HIGH);
      lcd.setCursor(0,0);
-lcd.print("GO");
+lcd.print("GO!!");
 
 digitalWrite(0,HIGH);
 }
@@ -101,10 +104,17 @@ void rfid(){
     content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
     content.concat(String(mfrc522.uid.uidByte[i], HEX));
   }
+
+
+
+
   content.toUpperCase();
 
   if (content.substring(1) == "B6 49 AA 30")
   {
+
+
+
     if (card1Balance >= 500)
     {
       String card = content.substring(1);
@@ -153,11 +163,14 @@ void rfid(){
       lcd.setCursor(0, 1);
       lcd.print( "No Money");
        senVal1 =1;
+
+
+
+
        delay(1000);
       lcd.clear();
     }
   }
-
   else   {
     lcd.setCursor(0, 0);
     lcd.print("Invalid Card");
